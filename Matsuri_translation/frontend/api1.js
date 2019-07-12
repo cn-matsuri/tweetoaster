@@ -168,8 +168,25 @@ function refresh_trans_div() {
         }
     }
 }
-
+function getUrlParam(k) {
+    var regExp = new RegExp('([?]|&)' + k + '=([^&]*)(&|$)');
+    var result = window.location.href.match(regExp);
+    if (result) {
+        return decodeURIComponent(result[2]);
+    } else {
+        return null;
+    }
+}
 $(function () {
+
+    if(getUrlParam("template")!=null && getUrlParam("template").length>0){
+        $.get(getUrlParam("template"), function (data, status) {
+            console.log(data);
+            if(confirm("将要用链接的内容替代现有的翻译模板，确认覆盖？"))localStorage.setItem("translatetemp",data);
+            window.location.href="/";
+        });
+    }
+
     $('#button-submit').click(function () {
         submit_task();
     });
@@ -179,6 +196,11 @@ $(function () {
         '</div>')
     $("#translatetemp").val(localStorage.getItem("translatetemp"));
     $("#translatetemp").keyup(refresh_trans_div);
+
+    if(getUrlParam("tweet")!=null && getUrlParam("tweet").length>0){
+        $('#url').val(getUrlParam("tweet"));
+        submit_task();
+    }
 
 });
 

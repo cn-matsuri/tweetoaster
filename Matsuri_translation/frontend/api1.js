@@ -68,25 +68,36 @@ function show_translate(data) {
     $("#translatetbody").html("");
     for (var i = 0; i < tweetpos.length; i++) {
         $("#translatetbody").append("<tr>\n" +
-            "      <th scope=\"row\">" + i + "</th>\n" +
+            "      <th scope=\"row\">" +
+            "<input type='checkbox' "+(i==0?"checked":"")+" id='show" + i + "'>" +
+            "</th>\n" +
             "      <td>" + tweetpos[i].text + "</td>\n" +
             "      <td><textarea id='transtxt" + i + "' " + (i == 0 ? "style='height:100px'" : "") + "></textarea></td>\n" +
             "    </tr>");
         $("#transtxt" + i).keyup(refresh_trans_div);
+        $("#show" + i).change(refresh_trans_div);
 
     }
 
 }
 
+
+
 function clip_screenshot() {
     for (var i = 0; i < tweetpos.length; i++) {
         if (tweetpos[i].bottom > 2000) break;
-        $("#screenshotclip" + i).css("height", tweetpos[i].bottom - (i == 0 ? 0 : tweetpos[i - 1].bottom));
+        $("#screenshotclip" + i).css("height", tweetpos[i].bottom - (i == 0 ? 0 : tweetpos[i - 1].blockbottom));
         $("#screenshotclip" + i).after("<div class='screenshotclip' id='" + "screenshotclip" + (i + 1) + "'></div>");
+        $("#screenshotclip" + i).after("<div class='screenshotclip' id='" + "screenshotclip" + (i + 1000) + "'></div>");
         $("#screenshotclip" + (i + 1)).css("background-image", $("#screenshotclip" + i).css("background-image"));
+        $("#screenshotclip" + (i + 1000)).css("background-image", $("#screenshotclip" + i).css("background-image"));
         $("#screenshotclip" + (i + 1)).css("width", $("#screenshotclip" + i).css("width"));
-        $("#screenshotclip" + (i + 1)).css("height", 2000 - tweetpos[i].bottom);
-        $("#screenshotclip" + (i + 1)).css("background-position-y", -tweetpos[i].bottom);
+        $("#screenshotclip" + (i + 1000)).css("width", $("#screenshotclip" + i).css("width"));
+        $("#screenshotclip" + (i + 1)).css("height", 2000 - tweetpos[i].blockbottom);
+        $("#screenshotclip" + (i + 1000)).css("height", tweetpos[i].blockbottom - tweetpos[i].bottom);
+        $("#screenshotclip" + (i + 1)).css("background-position-y", -tweetpos[i].blockbottom);
+        $("#screenshotclip" + (i + 1000)).css("background-position-y", -tweetpos[i].bottom);
+
 
         $("#screenshotclip" + i).after("<div class='screenshotclip' id='" + "translatediv" + i + "'></div>");
     }
@@ -96,6 +107,16 @@ function refresh_trans_div() {
     var template = $("#translatetemp").val();
     if (template != "") localStorage.setItem("translatetemp", template);
     for (var i = 0; i < tweetpos.length; i++) {
+        if($("#show"+i).is(':checked')){
+            $("#screenshotclip" + i).show();
+            $("#screenshotclip" + (i+1000)).show();
+            $("#translatediv" + i).show();
+
+        }else {
+            $("#screenshotclip" + i).hide();
+            $("#screenshotclip" + (i+1000)).hide();
+            $("#translatediv" + i).hide();
+        }
         $("#translatediv" + i).html("");
         if ($("#transtxt" + i).val() != "") {
             var transtxt = $("#transtxt" + i).val();

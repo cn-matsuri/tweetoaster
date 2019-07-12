@@ -32,7 +32,8 @@ class TweetProcess:
                 var item={
                     top:$(obj).offset().top,
                     bottom:$(obj).offset().top+$(obj).height(),
-                    text:$(obj).text().trim()
+                    text:$(obj).text().trim(),
+                    blockbottom:$(obj).parents(".permalink-tweet-container,.js-stream-item").offset().top+$(obj).parents(".permalink-tweet-container,.js-stream-item").height()
                 }
                 ls.push(item)
             });

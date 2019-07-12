@@ -76,7 +76,7 @@ function show_translate(data) {
             "      <th scope=\"row\">" +
             "<input type=\'checkbox\' "+(i==0?"checked":"")+" id=\'show" + i + "\'>" +
             "</th>\n" +
-            "      <td>" + tweetpos[i].text + "</td>\n" +
+            "      <td class='originaltext'>" + tweetpos[i].text + "</td>\n" +
             "      <td><div class=\'translatetd\' id=\'translatetd" + i + "\' "+ (i > 0 ? "style='display:none'" : "") +" >" +
             "<textarea id=\'transtxt" + i + "\' " + (i == 0 ? "style='height:100px'" : "") + "></textarea>\n      <div class=\"dropdown templatedropdown\">\n  <button class=\"btn btn-secondary dropdown-toggle\" type=\"button\" id=\"dropdownMenu" + i + "\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">\n    模板选择\n  </button>\n  <div class=\"dropdown-menu dropdownmenuitems\" aria-labelledby=\"dropdownMenu" + i + "\" id=\"dropdownmenuitems" + i + "\">\n  </div>\n</div>\n      " +
             "</div></td>\n" +
@@ -85,7 +85,9 @@ function show_translate(data) {
         $("#show" + i).change(refresh_trans_div);
 
     }
-
+    $(".originaltext").click(function () {
+        $("#show"+$(".originaltext").index(this)).click();
+    })
 }
 
 

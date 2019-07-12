@@ -54,6 +54,7 @@ function fetch_img(task_id) {
                     $.get('cache/' + data.result + '.txt', function (data, status) {
                         console.log(data);
                         show_translate(JSON.parse(data));
+                        refresh_trans_div();
                     });
                     clearInterval(event);
                 }
@@ -63,18 +64,22 @@ function fetch_img(task_id) {
 }
 
 var tweetpos;
-
+var templatechosen=[];
 function show_translate(data) {
     console.log(data);
     tweetpos = data;
+    templatechosen=[];
     $("#translatetbody").html("");
     for (var i = 0; i < tweetpos.length; i++) {
+        templatechosen.push("");
         $("#translatetbody").append("<tr>\n" +
             "      <th scope=\"row\">" +
-            "<input type='checkbox' "+(i==0?"checked":"")+" id='show" + i + "'>" +
+            "<input type=\'checkbox\' "+(i==0?"checked":"")+" id=\'show" + i + "\'>" +
             "</th>\n" +
             "      <td>" + tweetpos[i].text + "</td>\n" +
-            "      <td><textarea id='transtxt" + i + "' " + (i == 0 ? "style='height:100px'" : "") + "></textarea></td>\n" +
+            "      <td><div class=\'translatetd\' id=\'translatetd" + i + "\' "+ (i > 0 ? "style='display:none'" : "") +" >" +
+            "<textarea id=\'transtxt" + i + "\' " + (i == 0 ? "style='height:100px'" : "") + "></textarea>\n      <div class=\"dropdown templatedropdown\">\n  <button class=\"btn btn-secondary dropdown-toggle\" type=\"button\" id=\"dropdownMenu" + i + "\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">\n    模板选择\n  </button>\n  <div class=\"dropdown-menu dropdownmenuitems\" aria-labelledby=\"dropdownMenu" + i + "\" id=\"dropdownmenuitems" + i + "\">\n  </div>\n</div>\n      " +
+            "</div></td>\n" +
             "    </tr>");
         $("#transtxt" + i).keyup(refresh_trans_div);
         $("#show" + i).change(refresh_trans_div);
@@ -108,22 +113,58 @@ function clip_screenshot() {
 function refresh_trans_div() {
     var template = $("#translatetemp").val();
     if (template != "") localStorage.setItem("translatetemp", template);
+    var isMultiMode=true;
+    var templates=[];
+    var names=template.match(/(?<=<!--).*(?=-->)/g);
+    var contents=template.split(/<!--.*-->/g);
+    try {
+        for (var i = 0; i < names.length / 2; i++) {
+            if (names[i * 2] == names[i * 2 + 1]) {
+                templates.push({
+                    name: names[i * 2], content: contents[i * 2 + 1]
+                })
+            }else {
+                throw null;
+            }
+        }
+    }catch (e) {
+        isMultiMode=false;
+        templates=[{name:"",content:template}];
+    }
+    //console.log(templates);
+   if(isMultiMode)$('.templatedropdown').show();else $('.templatedropdown').hide();
+   $('.dropdownmenuitems').html("");
+   for(var i=0;i<templates.length;i++){
+       $('.dropdownmenuitems').append('<button class="dropdown-item templatebutton" type="button">'+templates[i].name+'</button>')
+   }
+   $('.templatebutton').click(function () {
+           templatechosen[$('.dropdownmenuitems').index($(this).parent())]=$(this).text().trim();
+           refresh_trans_div();
+   });
     for (var i = 0; i < tweetpos.length; i++) {
         if($("#show"+i).is(':checked')){
             $("#screenshotclip" + i).show();
             $("#screenshotclip" + (i+1000)).show();
             $("#translatediv" + i).show();
+            $("#translatetd" + i).show();
 
         }else {
             $("#screenshotclip" + i).hide();
             $("#screenshotclip" + (i+1000)).hide();
             $("#translatediv" + i).hide();
+            $("#translatetd" + i).hide();
         }
         $("#translatediv" + i).html("");
         if ($("#transtxt" + i).val() != "") {
             var transtxt = $("#transtxt" + i).val();
             transtxt=transtxt.split("\n").join("<br>");
-            $("#translatediv" + i).html(template.replace("{T}", transtxt));
+            var templateusing=template;
+            if(isMultiMode){
+                templateusing=templates[0].content;
+                for(var j=0;j<templates.length;j++)
+                    if(templates[j].name==templatechosen[i])templateusing=templates[j].content;
+            }
+            $("#translatediv" + i).html(templateusing.replace("{T}", transtxt));
         }
     }
 }

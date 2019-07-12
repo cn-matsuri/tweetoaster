@@ -60,7 +60,7 @@ class TweetProcess:
             var hours = now.getHours() < 10 ? "0" + now.getHours() : now.getHours();
             var minutes = now.getMinutes() < 10 ? "0" + now.getMinutes() : now.getMinutes();
             var time = hours + ":" + minutes;
-            var str = year + "年" + month + "月" + day + "日，" + time +" DEV";
+            var str = year + "年" + month + "月" + day + "日，" + time +" .";
             document.querySelector('.client-and-actions .metadata > span').innerText = str;
             ''')
 

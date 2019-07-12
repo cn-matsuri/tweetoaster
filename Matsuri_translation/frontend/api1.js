@@ -42,6 +42,8 @@ function fetch_img(task_id) {
                     };
 
                     xhr.onload = function (e) {
+                        $("#screenshots").html("            <div id=\"screenshotclip0\" class=\"screenshotclip\"\n" +
+                            "             style=\"height: 800px;background-image: url('img/twittersample.jpg')\"></div>");
                         $("#screenshotclip0").css("background-image", 'url("cache/' + data.result + '.png")');
                         $('#url').css("display", "");
                         $('#progress').css("display", "none");

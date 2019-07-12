@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="b4329979-ee9a-48b3-8e82-4fbbbd1c4566" name="fzxiao" url="http://54.250.145.213">
+        <fileTransfer host="54.250.145.213" port="22" privateKey="E:\Users\user\Documents\fzxiao.ppk" rootFolder="/home/ubuntu/matsuri_translation_dev" accessType="SFTP" keyPair="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
